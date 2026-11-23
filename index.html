@@ -1,0 +1,1816 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>ProFinder - Local Service Providers</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+
+<body>
+
+<!-- ================= HEADER ================= -->
+<header>
+    <nav class="navbar">
+
+        <div class="logo">
+            <i class="fa-solid fa-magnifying-glass-location"></i>
+            <span>Pro<span>Finder</span></span>
+        </div>
+
+        <ul class="nav-links" id="navLinks">
+            <li><a href="#home">Home</a></li>
+            <li><a href="#services">Services</a></li>
+            <li><a href="#providers">Providers</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+
+        <div class="nav-buttons">
+            <button class="dashboard-nav-btn" id="navDashboardBtn" onclick="returnToDashboard()" style="display:none;">
+                <i class="fa-solid fa-gauge"></i> My Dashboard
+            </button>
+
+            <button class="login-btn" onclick="openLogin()">
+                <i class="fa-solid fa-user"></i> Login
+            </button>
+
+            <button class="menu-btn" onclick="toggleMenu()">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+        </div>
+
+    </nav>
+</header>
+
+
+<!-- ================= AUTH GATE (shown only when not logged in) ================= -->
+<div class="auth-gate" id="authGate" style="display:none;">
+
+    <div class="auth-gate-info">
+
+        <span class="hero-label">
+            <i class="fa-solid fa-lock"></i>
+            Login required to continue
+        </span>
+
+        <h1>
+            Welcome to
+            <span>ProFinder</span>
+        </h1>
+
+        <p class="auth-gate-lead">
+            ProFinder is an online directory that makes finding trusted local
+            service providers easier, faster, and more organized. Sign in with
+            your email to start browsing providers and sending booking
+            requests. We'll send a one-time code to make sure it's really you.
+        </p>
+
+        <div class="auth-gate-features">
+
+            <div class="auth-feature">
+                <i class="fa-solid fa-magnifying-glass-location"></i>
+                <div>
+                    <h3>Search by service &amp; city</h3>
+                    <p>Find the right provider near you in seconds.</p>
+                </div>
+            </div>
+
+            <div class="auth-feature">
+                <i class="fa-solid fa-user-check"></i>
+                <div>
+                    <h3>Verified profiles</h3>
+                    <p>View provider details, specialists, and schedules.</p>
+                </div>
+            </div>
+
+            <div class="auth-feature">
+                <i class="fa-solid fa-star"></i>
+                <div>
+                    <h3>Customer reviews</h3>
+                    <p>Read ratings and feedback before you book.</p>
+                </div>
+            </div>
+
+            <div class="auth-feature">
+                <i class="fa-solid fa-paper-plane"></i>
+                <div>
+                    <h3>Easy booking requests</h3>
+                    <p>Contact providers through email or SMS.</p>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="auth-gate-steps">
+            <span><b>1</b> Verify your email</span>
+            <i class="fa-solid fa-chevron-right"></i>
+            <span><b>2</b> Search &amp; choose</span>
+            <i class="fa-solid fa-chevron-right"></i>
+            <span><b>3</b> Send a request</span>
+        </div>
+
+        <p class="auth-gate-note">
+            <i class="fa-solid fa-briefcase"></i>
+            Offering a service? Choose <strong>Service Provider</strong> when
+            setting up your account to publish your profile and receive
+            booking requests.
+        </p>
+
+    </div>
+
+</div>
+
+
+
+<!-- ================= HOME ================= -->
+<section class="hero" id="home">
+
+    <div class="hero-content">
+
+        <span class="hero-label" id="heroLabel">
+            <i class="fa-solid fa-location-dot" id="heroLabelIcon"></i>
+            <span id="heroLabelText">Find Local Services Near You</span>
+        </span>
+
+        <h1>
+            Find the Right
+            <span>Service Provider</span>
+            for You
+        </h1>
+
+        <p>
+            ProFinder helps you discover trusted local service providers
+            quickly and conveniently across cities and municipalities.
+        </p>
+
+        <div class="search-box" id="heroSearchBox">
+
+            <div class="search-field">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input
+                    type="text"
+                    id="searchInput"
+                    placeholder="Search service, specialty, or provider..."
+                    oninput="searchProviders()"
+                    onkeydown="if(event.key==='Enter'){handleSearchSubmit();}">
+                <button type="button"
+                        id="clearServiceBtn"
+                        class="field-clear-btn"
+                        title="Clear service"
+                        onclick="clearServiceInput()"
+                        style="display:none;">&times;</button>
+            </div>
+
+            <div class="search-divider"></div>
+
+            <div class="search-field location-picker-field" id="locationPickerWrapper">
+                <i class="fa-solid fa-location-dot"></i>
+                <input
+                    type="text"
+                    id="locationInput"
+                    placeholder="Choose City or Mini-City..."
+                    autocomplete="off"
+                    onfocus="openLocationDropdown()"
+                    onclick="openLocationDropdown()"
+                    oninput="handleLocationTyping()"
+                    onkeydown="if(event.key==='Enter'){closeLocationDropdown(); handleSearchSubmit();}">
+                <button type="button"
+                        id="clearLocationBtn"
+                        class="field-clear-btn"
+                        title="Clear location"
+                        onclick="clearLocationInput()"
+                        style="display:none;">&times;</button>
+                <button type="button"
+                        class="location-caret-btn"
+                        title="Browse Cities & Mini-Cities"
+                        onclick="toggleLocationDropdown()">
+                    <i class="fa-solid fa-chevron-down"></i>
+                </button>
+
+                <!-- Cities & Mini-Cities Selector Dropdown -->
+                <div class="location-dropdown" id="locationDropdown"></div>
+            </div>
+
+            <button type="button" class="search-submit-btn" onclick="handleSearchSubmit()">
+                Search
+            </button>
+
+        </div>
+
+        <div class="popular">
+            <span>Popular:</span>
+            <button onclick="quickSearch('Cleaning')">Cleaning</button>
+            <button onclick="quickSearch('Home Repair')">Home Repair</button>
+            <button onclick="quickSearch('Aircon')">Aircon</button>
+            <button onclick="quickSearch('Pet Care')">Pet Care</button>
+            <button onclick="quickSearch('Photography')">Photography</button>
+            <button onclick="quickSearch('Auto Repair')">Auto Repair</button>
+        </div>
+
+        <div class="hero-extra">
+
+            <div class="hero-stats" id="heroStats">
+                <div class="hero-stat">
+                    <strong id="statProviders">0</strong>
+                    <span>Local providers</span>
+                </div>
+                <div class="hero-stat">
+                    <strong id="statCategories">0</strong>
+                    <span>Service categories</span>
+                </div>
+                <div class="hero-stat">
+                    <strong id="statLocations">0</strong>
+                    <span>Cities &amp; mini-cities</span>
+                </div>
+            </div>
+
+            <button class="hero-dashboard-btn" id="heroDashboardBtn" onclick="returnToDashboard()" style="display:none;">
+                <i class="fa-solid fa-gauge"></i>
+                <span id="heroDashboardText">Go to My Dashboard</span>
+                <span class="notif-badge" id="heroConfirmedBadge" style="display:none;"></span>
+            </button>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ================= CATEGORIES ================= -->
+<section class="section" id="services">
+
+    <div class="section-title">
+        <span>EXPLORE SERVICES</span>
+        <h2>What Service Do You Need?</h2>
+        <p>
+            Browse 10 specialized service categories and find a provider
+            that matches your needs.
+        </p>
+    </div>
+
+    <div class="category-grid">
+
+        <div class="category-card" onclick="selectCategoryFromCard('Home Repair')">
+            <div class="category-icon">
+                <i class="fa-solid fa-house"></i>
+            </div>
+            <h3>Home Repair</h3>
+            <p>Plumbing, electrical and repair services</p>
+        </div>
+
+        <div class="category-card" onclick="selectCategoryFromCard('Cleaning')">
+            <div class="category-icon">
+                <i class="fa-solid fa-broom"></i>
+            </div>
+            <h3>Cleaning</h3>
+            <p>Home, condo, sofa and office cleaning</p>
+        </div>
+
+        <div class="category-card" onclick="selectCategoryFromCard('Beauty')">
+            <div class="category-icon">
+                <i class="fa-solid fa-scissors"></i>
+            </div>
+            <h3>Beauty</h3>
+            <p>Salon, makeup, nail and spa services</p>
+        </div>
+
+        <div class="category-card" onclick="selectCategoryFromCard('Tutoring')">
+            <div class="category-icon">
+                <i class="fa-solid fa-book"></i>
+            </div>
+            <h3>Tutoring</h3>
+            <p>Academic, coding and educational coaching</p>
+        </div>
+
+        <div class="category-card" onclick="selectCategoryFromCard('Computer')">
+            <div class="category-icon">
+                <i class="fa-solid fa-computer"></i>
+            </div>
+            <h3>Computer Services</h3>
+            <p>Laptop repair, Wi-Fi setup and IT support</p>
+        </div>
+
+        <div class="category-card" onclick="selectCategoryFromCard('Transportation')">
+            <div class="category-icon">
+                <i class="fa-solid fa-car"></i>
+            </div>
+            <h3>Transportation</h3>
+            <p>Airport transfers, sedan and cargo transport</p>
+        </div>
+
+        <!-- 4 NEW SPECIALTIES -->
+        <div class="category-card" onclick="selectCategoryFromCard('Appliance Repair')">
+            <div class="category-icon">
+                <i class="fa-solid fa-snowflake"></i>
+            </div>
+            <h3>Appliance & Aircon</h3>
+            <p>Aircon cleaning, freon recharge and appliance repair</p>
+        </div>
+
+        <div class="category-card" onclick="selectCategoryFromCard('Pet Care')">
+            <div class="category-icon">
+                <i class="fa-solid fa-paw"></i>
+            </div>
+            <h3>Pet Care & Grooming</h3>
+            <p>Home pet grooming, bathing and pet sitting</p>
+        </div>
+
+        <div class="category-card" onclick="selectCategoryFromCard('Events & Photography')">
+            <div class="category-icon">
+                <i class="fa-solid fa-camera-retro"></i>
+            </div>
+            <h3>Events & Photography</h3>
+            <p>Event coverage, portraits and video editing</p>
+        </div>
+
+        <div class="category-card" onclick="selectCategoryFromCard('Auto Repair')">
+            <div class="category-icon">
+                <i class="fa-solid fa-wrench"></i>
+            </div>
+            <h3>Auto & Moto Repair</h3>
+            <p>On-call car & motorcycle mechanic and tune-up</p>
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ================= PROVIDERS ================= -->
+<section class="section providers-section" id="providers">
+
+    <div class="section-heading">
+
+        <div>
+            <span>LOCAL PROVIDERS</span>
+            <h2>Featured Service Providers</h2>
+            <p id="resultsSummary" class="results-summary-text">Showing all 10 service providers</p>
+        </div>
+
+        <div class="provider-filter-controls">
+            <button class="back-dashboard-btn" onclick="returnToDashboard()">← Back to My Dashboard</button>
+
+            <button type="button" id="resetFiltersBtn" class="reset-filters-btn" onclick="resetAllSearchFilters()" style="display:none;">
+                <i class="fa-solid fa-rotate-left"></i> Reset Filters
+            </button>
+
+            <select id="categoryFilter" onchange="filterProviders()">
+                <option value="all">All Categories (10)</option>
+                <option value="Home Repair">Home Repair</option>
+                <option value="Cleaning">Cleaning</option>
+                <option value="Beauty">Beauty</option>
+                <option value="Tutoring">Tutoring</option>
+                <option value="Computer">Computer Services</option>
+                <option value="Transportation">Transportation</option>
+                <option value="Appliance Repair">Appliance & Aircon Repair</option>
+                <option value="Pet Care">Pet Care & Grooming</option>
+                <option value="Events & Photography">Events & Photography</option>
+                <option value="Auto Repair">Auto & Moto Repair</option>
+            </select>
+        </div>
+
+    </div>
+
+    <div class="provider-grid" id="providerGrid">
+
+        <!-- Provider 1 -->
+        <div class="provider-card"
+             data-category="Computer"
+             data-name="TechFix Solutions"
+             data-location="Batangas City">
+
+            <div class="provider-image computer">
+                <i class="fa-solid fa-laptop"></i>
+                <button class="favorite"
+                        onclick="toggleFavorite(this)">
+                    <i class="fa-regular fa-heart"></i>
+                </button>
+            </div>
+
+            <div class="provider-info">
+
+                <span class="verified">
+                    <i class="fa-solid fa-circle-check"></i>
+                    Verified Specialists
+                </span>
+
+                <h3>TechFix Solutions</h3>
+
+                <p class="service">
+                    Computer Repair & IT Support
+                </p>
+
+                <p class="card-location-text">
+                    <i class="fa-solid fa-location-dot"></i>
+                    <span>Batangas City</span>
+                </p>
+
+                <div class="rating">
+                    <span class="card-stars">★★★★★</span>
+                    <span class="card-rating-text">5.0 (2 reviews)</span>
+                </div>
+
+                <div class="provider-actions">
+                    <button onclick="viewProvider('TechFix Solutions')">
+                        View Providers
+                    </button>
+
+                    <button class="outline"
+                            onclick="openInquiry('TechFix Solutions')">
+                        Contact
+                    </button>
+                </div>
+
+            </div>
+        </div>
+
+
+        <!-- Provider 2 -->
+        <div class="provider-card"
+             data-category="Cleaning"
+             data-name="CleanHome Services"
+             data-location="Lipa City">
+
+            <div class="provider-image cleaning">
+                <i class="fa-solid fa-broom"></i>
+                <button class="favorite"
+                        onclick="toggleFavorite(this)">
+                    <i class="fa-regular fa-heart"></i>
+                </button>
+            </div>
+
+            <div class="provider-info">
+
+                <span class="verified">
+                    <i class="fa-solid fa-circle-check"></i>
+                    Verified Specialists
+                </span>
+
+                <h3>CleanHome Services</h3>
+
+                <p class="service">
+                    Home & Office Cleaning
+                </p>
+
+                <p class="card-location-text">
+                    <i class="fa-solid fa-location-dot"></i>
+                    <span>Lipa City</span>
+                </p>
+
+                <div class="rating">
+                    <span class="card-stars">★★★★★</span>
+                    <span class="card-rating-text">5.0 (2 reviews)</span>
+                </div>
+
+                <div class="provider-actions">
+                    <button onclick="viewProvider('CleanHome Services')">
+                        View Providers
+                    </button>
+
+                    <button class="outline"
+                            onclick="openInquiry('CleanHome Services')">
+                        Contact
+                    </button>
+                </div>
+
+            </div>
+        </div>
+
+
+        <!-- Provider 3 -->
+        <div class="provider-card"
+             data-category="Beauty"
+             data-name="Glow Beauty Studio"
+             data-location="Tanauan City">
+
+            <div class="provider-image beauty">
+                <i class="fa-solid fa-scissors"></i>
+                <button class="favorite"
+                        onclick="toggleFavorite(this)">
+                    <i class="fa-regular fa-heart"></i>
+                </button>
+            </div>
+
+            <div class="provider-info">
+
+                <span class="verified">
+                    <i class="fa-solid fa-circle-check"></i>
+                    Verified Specialists
+                </span>
+
+                <h3>Glow Beauty Studio</h3>
+
+                <p class="service">
+                    Hair & Beauty Services
+                </p>
+
+                <p class="card-location-text">
+                    <i class="fa-solid fa-location-dot"></i>
+                    <span>Tanauan City</span>
+                </p>
+
+                <div class="rating">
+                    <span class="card-stars">★★★★★</span>
+                    <span class="card-rating-text">5.0 (2 reviews)</span>
+                </div>
+
+                <div class="provider-actions">
+                    <button onclick="viewProvider('Glow Beauty Studio')">
+                        View Providers
+                    </button>
+
+                    <button class="outline"
+                            onclick="openInquiry('Glow Beauty Studio')">
+                        Contact
+                    </button>
+                </div>
+
+            </div>
+        </div>
+
+
+        <!-- Provider 4 -->
+        <div class="provider-card"
+             data-category="Tutoring"
+             data-name="StudySmart Tutorial"
+             data-location="Batangas City">
+
+            <div class="provider-image tutoring">
+                <i class="fa-solid fa-book-open"></i>
+                <button class="favorite"
+                        onclick="toggleFavorite(this)">
+                    <i class="fa-regular fa-heart"></i>
+                </button>
+            </div>
+
+            <div class="provider-info">
+
+                <span class="verified">
+                    <i class="fa-solid fa-circle-check"></i>
+                    Verified Specialists
+                </span>
+
+                <h3>StudySmart Tutorial</h3>
+
+                <p class="service">
+                    Academic & Coding Tutoring
+                </p>
+
+                <p class="card-location-text">
+                    <i class="fa-solid fa-location-dot"></i>
+                    <span>Batangas City</span>
+                </p>
+
+                <div class="rating">
+                    <span class="card-stars">★★★★★</span>
+                    <span class="card-rating-text">5.0 (2 reviews)</span>
+                </div>
+
+                <div class="provider-actions">
+                    <button onclick="viewProvider('StudySmart Tutorial')">
+                        View Providers
+                    </button>
+
+                    <button class="outline"
+                            onclick="openInquiry('StudySmart Tutorial')">
+                        Contact
+                    </button>
+                </div>
+
+            </div>
+        </div>
+
+
+        <!-- Provider 5 -->
+        <div class="provider-card"
+             data-category="Home Repair"
+             data-name="QuickFix Home Repair"
+             data-location="Batangas City, Malvar">
+
+            <div class="provider-image repair">
+                <i class="fa-solid fa-screwdriver-wrench"></i>
+                <button class="favorite"
+                        onclick="toggleFavorite(this)">
+                    <i class="fa-regular fa-heart"></i>
+                </button>
+            </div>
+
+            <div class="provider-info">
+
+                <span class="verified">
+                    <i class="fa-solid fa-circle-check"></i>
+                    Verified Specialists
+                </span>
+
+                <h3>QuickFix Home Repair</h3>
+
+                <p class="service">
+                    Plumbing & Electrical
+                </p>
+
+                <p class="card-location-text">
+                    <i class="fa-solid fa-location-dot"></i>
+                    <span>Batangas City, Malvar</span>
+                </p>
+
+                <div class="rating">
+                    <span class="card-stars">★★★★★</span>
+                    <span class="card-rating-text">4.5 (2 reviews)</span>
+                </div>
+
+                <div class="provider-actions">
+                    <button onclick="viewProvider('QuickFix Home Repair')">
+                        View Providers
+                    </button>
+
+                    <button class="outline"
+                            onclick="openInquiry('QuickFix Home Repair')">
+                        Contact
+                    </button>
+                </div>
+
+            </div>
+        </div>
+
+
+        <!-- Provider 6 -->
+        <div class="provider-card"
+             data-category="Transportation"
+             data-name="SafeRide Transport"
+             data-location="Batangas City">
+
+            <div class="provider-image transport">
+                <i class="fa-solid fa-car"></i>
+                <button class="favorite"
+                        onclick="toggleFavorite(this)">
+                    <i class="fa-regular fa-heart"></i>
+                </button>
+            </div>
+
+            <div class="provider-info">
+
+                <span class="verified">
+                    <i class="fa-solid fa-circle-check"></i>
+                    Verified Specialists
+                </span>
+
+                <h3>SafeRide Transport</h3>
+
+                <p class="service">
+                    Local & Airport Transportation
+                </p>
+
+                <p class="card-location-text">
+                    <i class="fa-solid fa-location-dot"></i>
+                    <span>Batangas City</span>
+                </p>
+
+                <div class="rating">
+                    <span class="card-stars">★★★★★</span>
+                    <span class="card-rating-text">5.0 (2 reviews)</span>
+                </div>
+
+                <div class="provider-actions">
+                    <button onclick="viewProvider('SafeRide Transport')">
+                        View Providers
+                    </button>
+
+                    <button class="outline"
+                            onclick="openInquiry('SafeRide Transport')">
+                        Contact
+                    </button>
+                </div>
+
+            </div>
+        </div>
+
+
+        <!-- Provider 7 (NEW SPECIALTY 1: Appliance & Aircon Repair - No pre-added reviews) -->
+        <div class="provider-card"
+             data-category="Appliance Repair"
+             data-name="CoolBreeze Aircon & Appliance Care"
+             data-location="Bauan, Santo Tomas City">
+
+            <div class="provider-image appliance">
+                <i class="fa-solid fa-snowflake"></i>
+                <button class="favorite"
+                        onclick="toggleFavorite(this)">
+                    <i class="fa-regular fa-heart"></i>
+                </button>
+            </div>
+
+            <div class="provider-info">
+
+                <span class="verified">
+                    <i class="fa-solid fa-circle-check"></i>
+                    Verified Specialists
+                </span>
+
+                <h3>CoolBreeze Aircon & Appliance Care</h3>
+
+                <p class="service">
+                    Aircon Cleaning, Freon & Appliance Repair
+                </p>
+
+                <p class="card-location-text">
+                    <i class="fa-solid fa-location-dot"></i>
+                    <span>Bauan, Santo Tomas City</span>
+                </p>
+
+                <div class="rating">
+                    <span class="card-stars">☆☆☆☆☆</span>
+                    <span class="card-rating-text">No reviews yet</span>
+                </div>
+
+                <div class="provider-actions">
+                    <button onclick="viewProvider('CoolBreeze Aircon & Appliance Care')">
+                        View Providers
+                    </button>
+
+                    <button class="outline"
+                            onclick="openInquiry('CoolBreeze Aircon & Appliance Care')">
+                        Contact
+                    </button>
+                </div>
+
+            </div>
+        </div>
+
+
+        <!-- Provider 8 (NEW SPECIALTY 2: Pet Care & Grooming - No pre-added reviews) -->
+        <div class="provider-card"
+             data-category="Pet Care"
+             data-name="PawFect Pet Grooming & Care"
+             data-location="San Jose, Lipa City">
+
+            <div class="provider-image petcare">
+                <i class="fa-solid fa-paw"></i>
+                <button class="favorite"
+                        onclick="toggleFavorite(this)">
+                    <i class="fa-regular fa-heart"></i>
+                </button>
+            </div>
+
+            <div class="provider-info">
+
+                <span class="verified">
+                    <i class="fa-solid fa-circle-check"></i>
+                    Verified Specialists
+                </span>
+
+                <h3>PawFect Pet Grooming & Care</h3>
+
+                <p class="service">
+                    Home Pet Grooming & Pet Sitting
+                </p>
+
+                <p class="card-location-text">
+                    <i class="fa-solid fa-location-dot"></i>
+                    <span>San Jose, Lipa City</span>
+                </p>
+
+                <div class="rating">
+                    <span class="card-stars">☆☆☆☆☆</span>
+                    <span class="card-rating-text">No reviews yet</span>
+                </div>
+
+                <div class="provider-actions">
+                    <button onclick="viewProvider('PawFect Pet Grooming & Care')">
+                        View Providers
+                    </button>
+
+                    <button class="outline"
+                            onclick="openInquiry('PawFect Pet Grooming & Care')">
+                        Contact
+                    </button>
+                </div>
+
+            </div>
+        </div>
+
+
+        <!-- Provider 9 (NEW SPECIALTY 3: Events & Photography - No pre-added reviews) -->
+        <div class="provider-card"
+             data-category="Events & Photography"
+             data-name="LensCraft Events & Photography"
+             data-location="Nasugbu, Taal">
+
+            <div class="provider-image photography">
+                <i class="fa-solid fa-camera-retro"></i>
+                <button class="favorite"
+                        onclick="toggleFavorite(this)">
+                    <i class="fa-regular fa-heart"></i>
+                </button>
+            </div>
+
+            <div class="provider-info">
+
+                <span class="verified">
+                    <i class="fa-solid fa-circle-check"></i>
+                    Verified Specialists
+                </span>
+
+                <h3>LensCraft Events & Photography</h3>
+
+                <p class="service">
+                    Event Photography & Videography
+                </p>
+
+                <p class="card-location-text">
+                    <i class="fa-solid fa-location-dot"></i>
+                    <span>Nasugbu, Taal</span>
+                </p>
+
+                <div class="rating">
+                    <span class="card-stars">☆☆☆☆☆</span>
+                    <span class="card-rating-text">No reviews yet</span>
+                </div>
+
+                <div class="provider-actions">
+                    <button onclick="viewProvider('LensCraft Events & Photography')">
+                        View Providers
+                    </button>
+
+                    <button class="outline"
+                            onclick="openInquiry('LensCraft Events & Photography')">
+                        Contact
+                    </button>
+                </div>
+
+            </div>
+        </div>
+
+
+        <!-- Provider 10 (NEW SPECIALTY 4: Auto & Moto Repair - No pre-added reviews) -->
+        <div class="provider-card"
+             data-category="Auto Repair"
+             data-name="MotoCare & Auto Mechanics"
+             data-location="Rosario, Lemery">
+
+            <div class="provider-image autorepair">
+                <i class="fa-solid fa-wrench"></i>
+                <button class="favorite"
+                        onclick="toggleFavorite(this)">
+                    <i class="fa-regular fa-heart"></i>
+                </button>
+            </div>
+
+            <div class="provider-info">
+
+                <span class="verified">
+                    <i class="fa-solid fa-circle-check"></i>
+                    Verified Specialists
+                </span>
+
+                <h3>MotoCare & Auto Mechanics</h3>
+
+                <p class="service">
+                    Car & Motorcycle On-Call Mechanic
+                </p>
+
+                <p class="card-location-text">
+                    <i class="fa-solid fa-location-dot"></i>
+                    <span>Rosario, Lemery</span>
+                </p>
+
+                <div class="rating">
+                    <span class="card-stars">☆☆☆☆☆</span>
+                    <span class="card-rating-text">No reviews yet</span>
+                </div>
+
+                <div class="provider-actions">
+                    <button onclick="viewProvider('MotoCare & Auto Mechanics')">
+                        View Providers
+                    </button>
+
+                    <button class="outline"
+                            onclick="openInquiry('MotoCare & Auto Mechanics')">
+                        Contact
+                    </button>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <div id="noResults" class="no-results">
+        <i class="fa-solid fa-face-frown"></i>
+        <h3>No providers found</h3>
+        <p id="noResultsHint">Try another service, city, or reset your filters.</p>
+        <button type="button" class="reset-filters-btn" style="margin-top:14px;" onclick="resetAllSearchFilters()">
+            <i class="fa-solid fa-rotate-left"></i> Show All Providers
+        </button>
+    </div>
+
+</section>
+
+
+<!-- ================= HOW IT WORKS ================= -->
+<section class="how-section">
+
+    <div class="section-title">
+        <span>HOW IT WORKS</span>
+        <h2>Find a Provider in 3 Easy Steps</h2>
+    </div>
+
+    <div class="steps">
+
+        <div class="step">
+            <div class="step-number">1</div>
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <h3>Search</h3>
+            <p>Search for the service and city or town you need.</p>
+        </div>
+
+        <div class="step">
+            <div class="step-number">2</div>
+            <i class="fa-solid fa-user-check"></i>
+            <h3>Choose</h3>
+            <p>Compare providers and view their profiles.</p>
+        </div>
+
+        <div class="step">
+            <div class="step-number">3</div>
+            <i class="fa-solid fa-comments"></i>
+            <h3>Connect</h3>
+            <p>Contact the provider and send an inquiry.</p>
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ================= ABOUT ================= -->
+<section class="section about-section" id="about">
+
+    <div class="about-content">
+
+        <div class="about-icon">
+            <i class="fa-solid fa-handshake"></i>
+        </div>
+
+        <div>
+            <span>ABOUT PROFINDER</span>
+
+            <h2>Connecting Customers With Local Professionals</h2>
+
+            <p>
+                ProFinder is an online directory created to make finding
+                local service providers easier, faster, and more organized.
+                Users can discover different service providers, explore
+                their profiles, and contact them based on their needs.
+            </p>
+
+            <div class="about-features">
+
+                <div>
+                    <i class="fa-solid fa-check"></i>
+                    Verified provider profiles
+                </div>
+
+                <div>
+                    <i class="fa-solid fa-check"></i>
+                    Easy service & city search
+                </div>
+
+                <div>
+                    <i class="fa-solid fa-check"></i>
+                    Local service directory
+                </div>
+
+                <div>
+                    <i class="fa-solid fa-check"></i>
+                    Customer reviews
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ================= CONTACT ================= -->
+<section class="section contact-section" id="contact">
+
+    <div class="section-title">
+        <span>CONTACT US</span>
+        <h2>Have Questions?</h2>
+        <p>Send us a message and our team will get back to you.</p>
+    </div>
+
+    <form id="contactForm" onsubmit="submitContact(event)">
+
+        <div class="form-row">
+
+            <input
+                type="text"
+                id="contactName"
+                placeholder="Your Name"
+                required>
+
+            <input
+                type="email"
+                id="contactEmail"
+                placeholder="Your Email"
+                required>
+
+        </div>
+
+        <input
+            type="text"
+            id="contactSubject"
+            placeholder="Subject"
+            required>
+
+        <textarea
+            id="contactMessage"
+            placeholder="Your Message"
+            required></textarea>
+
+        <button type="submit" class="main-button">
+            Send Message
+        </button>
+
+    </form>
+
+</section>
+
+
+<!-- ================= FOOTER ================= -->
+<footer>
+
+    <div class="footer-content">
+
+        <div class="footer-logo">
+            <i class="fa-solid fa-magnifying-glass-location"></i>
+            Pro<span>Finder</span>
+        </div>
+
+        <p>
+            Connecting communities with trusted local service providers.
+        </p>
+
+        <div class="socials">
+            <a href="#"><i class="fa-brands fa-facebook"></i></a>
+            <a href="#"><i class="fa-brands fa-instagram"></i></a>
+            <a href="#"><i class="fa-brands fa-x-twitter"></i></a>
+        </div>
+
+    </div>
+
+    <div class="copyright">
+        © 2026 ProFinder. All Rights Reserved.
+    </div>
+
+</footer>
+
+
+<!-- ================= USER DASHBOARD ================= -->
+<section id="userDashboard" class="dashboard-section" style="display:none;">
+    <div class="dashboard-container">
+        <div class="dashboard-heading">
+            <div>
+                <span class="dashboard-label">PROFINDER ACCOUNT</span>
+                <h1>Welcome, <span id="dashboardName">User</span>!</h1>
+                <p>Manage your ProFinder account and explore local services.</p>
+            </div>
+            <button class="dashboard-logout" onclick="logout()">
+                <i class="fa-solid fa-right-from-bracket"></i> Logout
+            </button>
+        </div>
+
+        <div class="dashboard-profile">
+            <div class="dashboard-avatar"><i class="fa-solid fa-user"></i></div>
+            <div>
+                <h3 id="dashboardFullName">User Name</h3>
+                <p id="dashboardEmail">user@email.com</p>
+                <span class="role-pill" id="dashboardRole">Customer</span>
+            </div>
+        </div>
+
+        <div id="clientNotificationBanner" class="confirmation-banner" style="display:none;"></div>
+
+        <div class="dashboard-tabs">
+            <button class="dashboard-tab active" onclick="showUserTab('customerOverview', this)">Overview</button>
+            <button class="dashboard-tab" onclick="showUserTab('customerBookings', this)">
+                My Bookings <span id="confirmedBadge" class="notif-badge" style="display:none;">0</span>
+            </button>
+        </div>
+
+        <div id="customerOverview" class="user-tab-panel">
+            <h2 class="dashboard-title">Your Dashboard</h2>
+            <div class="dashboard-cards">
+                <article class="dashboard-card">
+                    <div class="dashboard-card-icon"><i class="fa-solid fa-magnifying-glass"></i></div>
+                    <h3>Find Services</h3>
+                    <p>Browse local service providers and find the service you need.</p>
+                    <button onclick="browseProviders()">Browse Providers</button>
+                </article>
+                <article class="dashboard-card">
+                    <div class="dashboard-card-icon"><i class="fa-regular fa-heart"></i></div>
+                    <h3>My Favorites</h3>
+                    <p>Keep track of service providers you have marked as favorites.</p>
+                    <button onclick="showFavorites()">View Favorites</button>
+                </article>
+                <article class="dashboard-card">
+                    <div class="dashboard-card-icon"><i class="fa-regular fa-paper-plane"></i></div>
+                    <h3>My Inquiries</h3>
+                    <p>Send an inquiry to a local service provider.</p>
+                    <button onclick="browseProviders()">Contact a Provider</button>
+                </article>
+            </div>
+            <h2 class="dashboard-title">Explore Categories</h2>
+            <div class="dashboard-category-links">
+                <button onclick="browseCategory('All Categories')">All Categories</button>
+                <button onclick="browseCategory('Home Repair')">Home Repair</button>
+                <button onclick="browseCategory('Cleaning')">Cleaning</button>
+                <button onclick="browseCategory('Beauty')">Beauty</button>
+                <button onclick="browseCategory('Tutoring')">Tutoring</button>
+                <button onclick="browseCategory('Computer')">Computer Services</button>
+                <button onclick="browseCategory('Transportation')">Transportation</button>
+                <button onclick="browseCategory('Appliance Repair')">Appliance & Aircon</button>
+                <button onclick="browseCategory('Pet Care')">Pet Care & Grooming</button>
+                <button onclick="browseCategory('Events & Photography')">Events & Photography</button>
+                <button onclick="browseCategory('Auto Repair')">Auto & Moto Repair</button>
+            </div>
+        </div>
+
+        <div id="customerBookings" class="user-tab-panel" style="display:none;">
+            <h2 class="dashboard-title">My Bookings & Requests</h2>
+            <div id="customerBookingList" class="request-list"></div>
+        </div>
+    </div>
+</section>
+
+
+<!-- ================= PROVIDER DASHBOARD ================= -->
+<section id="providerDashboard" class="dashboard-section" style="display:none;">
+    <div class="dashboard-container">
+        <div class="dashboard-heading">
+            <div>
+                <span class="dashboard-label">PROVIDER WORKSPACE</span>
+                <h1>Welcome, <span id="providerWelcomeName">Provider</span>!</h1>
+                <p>Manage your service profile and customer requests.</p>
+            </div>
+            <button class="dashboard-logout" onclick="logout()">
+                <i class="fa-solid fa-right-from-bracket"></i> Logout
+            </button>
+        </div>
+
+        <div class="dashboard-profile">
+            <div class="dashboard-avatar"><i class="fa-solid fa-user-tie"></i></div>
+            <div>
+                <h3 id="providerBusinessName">Your Business</h3>
+                <p id="providerAccountEmail">provider@email.com</p>
+                <span class="role-pill">Service Provider</span>
+            </div>
+        </div>
+
+        <!-- LIVE BOOKING TALLY (counts only the requests addressed to the signed-in specialist) -->
+        <div class="provider-stats" id="providerStats" aria-live="polite">
+            <span class="live-pill"><i></i> Live</span>
+            <span class="stats-hint"><i class="fa-solid fa-hand-pointer"></i> Click a card to filter your requests</span>
+
+            <div class="stat-card" data-stat="upcoming" role="button" tabindex="0" aria-pressed="false" title="Show only upcoming requests" onclick="filterProviderRequests('upcoming')">
+                <i class="fa-solid fa-calendar-day"></i>
+                <strong id="provStat_upcoming">0</strong>
+                <span>Upcoming</span>
+            </div>
+
+            <div class="stat-card" data-stat="confirmed" role="button" tabindex="0" aria-pressed="false" title="Show only confirmed requests" onclick="filterProviderRequests('confirmed')">
+                <i class="fa-solid fa-calendar-check"></i>
+                <strong id="provStat_confirmed">0</strong>
+                <span>Confirmed</span>
+            </div>
+
+            <div class="stat-card" data-stat="pending" role="button" tabindex="0" aria-pressed="false" title="Show only pending requests" onclick="filterProviderRequests('pending')">
+                <i class="fa-solid fa-clock"></i>
+                <strong id="provStat_pending">0</strong>
+                <span>Pending</span>
+            </div>
+
+            <div class="stat-card" data-stat="cancelled" role="button" tabindex="0" aria-pressed="false" title="Show only cancelled requests" onclick="filterProviderRequests('cancelled')">
+                <i class="fa-solid fa-ban"></i>
+                <strong id="provStat_cancelled">0</strong>
+                <span>Cancelled</span>
+            </div>
+        </div>
+
+        <div id="specialistOnboardBanner" class="confirmation-banner onboarding-banner" style="display:none;"></div>
+
+        <div class="dashboard-tabs">
+            <button class="dashboard-tab active" onclick="showProviderTab('requestsTab', this)">Customer Requests</button>
+            <button class="dashboard-tab" id="specialistsTabBtn" onclick="showProviderTab('specialistsTab', this)">My Specialists</button>
+            <button class="dashboard-tab" id="ratingsTabBtn" onclick="showProviderTab('ratingsTab', this)">Ratings</button>
+        </div>
+
+        <div id="requestsTab" class="provider-tab-panel">
+            <h2 class="dashboard-title">Incoming Customer Requests</h2>
+            <div id="requestFilterBar" class="request-filter-bar" style="display:none;"></div>
+            <div id="providerRequests" class="request-list"></div>
+        </div>
+
+        <div id="specialistsTab" class="provider-tab-panel" style="display:none;">
+            <div class="specialist-editor-head">
+                <div>
+                    <h2 class="dashboard-title" id="specialistsTabTitle">My Specialists</h2>
+                    <p class="dashboard-hint" id="specialistsTabHint">
+                        Edit the photo and details of each specialist. Saved changes appear on the
+                        customer website right away.
+                    </p>
+                </div>
+                <button type="button" class="preview-site-btn" onclick="previewProviderOnWebsite()">
+                    <i class="fa-solid fa-eye"></i> See it on the website
+                </button>
+            </div>
+            <div id="providerSpecialistList" class="specialist-editor-list"></div>
+            <datalist id="specialistCityOptions"></datalist>
+        </div>
+
+        <div id="ratingsTab" class="provider-tab-panel" style="display:none;">
+            <h2 class="dashboard-title">My Ratings</h2>
+            <p class="dashboard-hint">
+                These are the verified ratings and picture proofs that customers posted after being served.
+                They are the same ratings customers see on the website.
+            </p>
+            <div id="providerRatingsList" class="specialist-editor-list"></div>
+        </div>
+    </div>
+</section>
+
+
+<!-- ================= LOGIN MODAL (EMAIL > ONE-TIME CODE > PASSWORD) ================= -->
+<div class="modal" id="loginModal">
+
+    <div class="modal-content">
+
+        <button class="close" onclick="closeModal('loginModal')">
+            &times;
+        </button>
+
+        <div class="modal-icon">
+            <i class="fa-solid fa-envelope" id="loginStepIcon"></i>
+        </div>
+
+        <h2 id="loginTitle">Welcome Back</h2>
+        <p id="loginSubtitle">Enter your email and we'll send you a one-time verification code.</p>
+
+        <div class="login-progress" id="loginProgress">
+            <span class="active"><b>1</b> Email</span>
+            <i></i>
+            <span><b>2</b> Verify</span>
+            <i></i>
+            <span><b>3</b> <em id="loginProgressLast">Password</em></span>
+        </div>
+
+        <!-- STEP 1: EMAIL -->
+        <form id="loginEmailForm" onsubmit="sendLoginOtp(event)">
+
+            <input
+                type="email"
+                id="loginEmail"
+                placeholder="Email Address"
+                autocomplete="email"
+                required>
+
+            <button class="main-button" type="submit" id="sendOtpBtn">
+                Send Verification Code
+            </button>
+
+        </form>
+
+        <!-- STEP 2: 6-DIGIT CODE -->
+        <form id="loginOtpForm" onsubmit="verifyLoginOtp(event)" style="display:none;">
+
+            <p class="otp-sent-to">
+                Code sent to <strong id="otpEmailLabel"></strong>
+            </p>
+
+            <div class="otp-inputs" id="otpInputs">
+                <input class="otp-box" type="text" inputmode="numeric" maxlength="6" autocomplete="one-time-code" aria-label="Digit 1">
+                <input class="otp-box" type="text" inputmode="numeric" maxlength="1" aria-label="Digit 2">
+                <input class="otp-box" type="text" inputmode="numeric" maxlength="1" aria-label="Digit 3">
+                <input class="otp-box" type="text" inputmode="numeric" maxlength="1" aria-label="Digit 4">
+                <input class="otp-box" type="text" inputmode="numeric" maxlength="1" aria-label="Digit 5">
+                <input class="otp-box" type="text" inputmode="numeric" maxlength="1" aria-label="Digit 6">
+            </div>
+
+            <div class="otp-demo-box" id="otpDemoBox" style="display:none;">
+                <i class="fa-solid fa-flask"></i>
+                Demo mode: EmailJS isn't set up yet, so no real email was sent.
+                Your code is <strong id="otpDemoCode"></strong>
+            </div>
+
+            <button class="main-button" type="submit">
+                Verify Code
+            </button>
+
+            <div class="otp-actions">
+                <button type="button" id="resendOtpBtn" onclick="resendLoginOtp()">Resend code</button>
+                <span>&bull;</span>
+                <button type="button" onclick="resetLoginFlow()">Change email</button>
+            </div>
+
+        </form>
+
+        <!-- STEP 3A: PASSWORD (existing account) -->
+        <form id="loginPasswordForm" onsubmit="login(event)" style="display:none;">
+
+            <input
+                class="pw-field"
+                type="password"
+                id="loginPassword"
+                placeholder="Password"
+                minlength="6"
+                autocomplete="current-password"
+                required>
+
+            <label class="show-pass">
+                <input type="checkbox" onchange="togglePasswordVisibility(this)"> Show password
+            </label>
+
+            <button class="main-button" type="submit">
+                Login
+            </button>
+
+            <div class="otp-actions">
+                <button type="button" onclick="startPasswordReset()">Forgot password?</button>
+                <span>&bull;</span>
+                <button type="button" onclick="resetLoginFlow()">Use a different email</button>
+            </div>
+
+        </form>
+
+        <!-- STEP 3C: CREATE / RESET PASSWORD (verified email, no password of your own yet) -->
+        <form id="loginNewPasswordForm" onsubmit="createPassword(event)" style="display:none;">
+
+            <input
+                class="pw-field"
+                type="password"
+                id="newPassword"
+                placeholder="New password (at least 6 characters)"
+                minlength="6"
+                autocomplete="new-password"
+                required>
+
+            <input
+                class="pw-field"
+                type="password"
+                id="confirmNewPassword"
+                placeholder="Confirm new password"
+                minlength="6"
+                autocomplete="new-password"
+                required>
+
+            <label class="show-pass">
+                <input type="checkbox" onchange="togglePasswordVisibility(this)"> Show password
+            </label>
+
+            <button class="main-button" type="submit">
+                Save Password &amp; Continue
+            </button>
+
+        </form>
+
+        <!-- STEP 3B: ACCOUNT SET-UP (first time with this verified email) -->
+        <form id="loginSetupForm" onsubmit="register(event)" style="display:none;">
+
+            <input type="hidden" id="registerEmail">
+
+            <input
+                type="text"
+                id="registerName"
+                placeholder="Full Name"
+                required>
+
+            <select id="registerRole" required>
+                <option value="">Select Account Type</option>
+                <option value="Customer">Customer</option>
+                <option value="Service Provider">Service Provider</option>
+            </select>
+
+            <div id="providerRegisterFields" style="display:none;">
+                <p class="role-hint">
+                    <i class="fa-solid fa-user-gear"></i>
+                    You'll join as a <strong>specialist</strong>. After creating your account,
+                    you'll fill in your specialist profile and choose your service category.
+                </p>
+            </div>
+
+            <input
+                class="pw-field"
+                type="password"
+                id="registerPassword"
+                placeholder="Create a password (at least 6 characters)"
+                minlength="6"
+                autocomplete="new-password"
+                required>
+
+            <input
+                class="pw-field"
+                type="password"
+                id="registerConfirmPassword"
+                placeholder="Confirm password"
+                minlength="6"
+                autocomplete="new-password"
+                required>
+
+            <label class="show-pass">
+                <input type="checkbox" onchange="togglePasswordVisibility(this)"> Show password
+            </label>
+
+            <button class="main-button" type="submit">
+                Create Account
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<!-- ================= SPECIALIST ONBOARDING (profile -> category) ================= -->
+<div class="modal" id="specialistOnboardModal">
+    <div class="modal-content onboard-content">
+        <button class="close" onclick="closeSpecialistOnboarding()">&times;</button>
+        <div id="onboardBody"></div>
+    </div>
+</div>
+
+
+<!-- ================= INQUIRY / BOOKING MODAL (EMAIL & SMS CHOICE) ================= -->
+<div class="modal" id="inquiryModal" style="z-index: 2150;">
+
+    <div class="modal-content booking-request-modal">
+
+        <button class="close" onclick="closeModal('inquiryModal')">
+            &times;
+        </button>
+
+        <div class="modal-icon">
+            <i class="fa-solid fa-paper-plane"></i>
+        </div>
+
+        <h2>Send Booking Request</h2>
+
+        <p class="booking-target-summary">
+            Category: <strong id="selectedProvider"></strong><br>
+            <span id="selectedSpecialistBadge" style="display:none; color:#2563eb; font-weight:bold; font-size:14px;"></span>
+            <span id="selectedSpecialistContact" class="specialist-contact-pill" style="display:none;"></span>
+        </p>
+
+        <form onsubmit="sendInquiry(event)">
+
+            <!-- Choose Where to Send Booking: Thru Email or Thru SMS -->
+            <div class="channel-selector-wrapper">
+                <span class="channel-selector-label">Choose Where to Send Booking Request:</span>
+                <div class="channel-options">
+                    <button type="button"
+                            id="channelEmailBtn"
+                            class="channel-option-btn active"
+                            onclick="selectBookingChannel('email')">
+                        <i class="fa-solid fa-envelope"></i> Thru Email
+                    </button>
+                    <button type="button"
+                            id="channelSmsBtn"
+                            class="channel-option-btn"
+                            onclick="selectBookingChannel('sms')">
+                        <i class="fa-solid fa-comment-sms"></i> Thru SMS
+                    </button>
+                </div>
+                <small id="channelRoutingHint" class="channel-routing-hint">
+                    <i class="fa-solid fa-circle-info"></i> Will dispatch formatted HTML booking email directly to the specialist's email.
+                </small>
+            </div>
+
+            <input
+                type="text"
+                id="inquiryName"
+                placeholder="Your Full Name (Client Name)"
+                required>
+
+            <input
+                type="email"
+                id="inquiryEmail"
+                placeholder="Your Gmail / Email"
+                required>
+
+            <input
+                type="tel"
+                id="inquiryPhone"
+                placeholder="Your Mobile Number (e.g., 0917-123-4567)"
+                style="display:none;">
+
+            <input
+                type="text"
+                id="inquiryProblem"
+                placeholder="Problem / Service Title (e.g., Aircon Cleaning & Checkup)"
+                required>
+
+            <input
+                type="datetime-local"
+                id="inquirySchedule"
+                required>
+
+            <textarea
+                id="inquiryMessage"
+                placeholder="Describe the problem & service details you need..."
+                required></textarea>
+
+            <button type="submit" id="sendBookingSubmitBtn" class="main-button">
+                <i class="fa-solid fa-envelope"></i> Send Booking Thru Email
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<!-- ================= SPECIALIST GMAIL INBOX SIMULATION MODAL ================= -->
+<div class="modal" id="emailPreviewModal" style="z-index: 2300;">
+
+    <div class="modal-content gmail-sim-modal">
+
+        <div class="gmail-toolbar">
+            <div class="gmail-toolbar-left">
+                <button type="button" class="gmail-back-btn" onclick="closeModal('emailPreviewModal')" title="Close Inbox">
+                    <i class="fa-solid fa-arrow-left"></i>
+                </button>
+                <span class="gmail-toolbar-badge"><i class="fa-brands fa-google"></i> Specialist Gmail Inbox Simulation</span>
+            </div>
+            <button type="button" class="gmail-close-x" onclick="closeModal('emailPreviewModal')">&times;</button>
+        </div>
+
+        <div class="gmail-subject-bar">
+            <h3 id="gmailSubjectText">New Service Booking Request</h3>
+            <span class="gmail-tag external">External</span>
+            <span class="gmail-tag inbox">Inbox</span>
+        </div>
+
+        <div class="gmail-sender-row">
+            <div class="gmail-sender-avatar">
+                <i class="fa-solid fa-user"></i>
+            </div>
+            <div class="gmail-sender-details">
+                <div class="gmail-sender-line">
+                    <strong>ProFinder Specialist Dispatch</strong>
+                    <span class="gmail-sender-addr">&lt;dispatch@profinder.com&gt;</span>
+                </div>
+                <div class="gmail-recipient-line">
+                    to <strong id="gmailRecipientEmail">24-06547@g.batstate-u.edu.ph</strong> <i class="fa-solid fa-caret-down"></i>
+                </div>
+            </div>
+            <div class="gmail-timestamp" id="gmailTimestampText">
+                Nov 20, 2026, 11:17 PM
+            </div>
+        </div>
+
+        <div id="gmailRenderedBody" class="gmail-rendered-body"></div>
+
+        <div class="gmail-sim-footer">
+            <a id="openRealGmailLink" href="#" target="_blank" class="gmail-real-btn">
+                <i class="fa-solid fa-paper-plane"></i> Open in Real Gmail / Mail App
+            </a>
+            <button type="button" id="gmailConfirmBookingBtn" class="gmail-confirm-btn">
+                <i class="fa-solid fa-circle-check"></i> Confirm Client Booking Now
+            </button>
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ================= SPECIALIST SMS SIMULATION MODAL ================= -->
+<div class="modal" id="smsPreviewModal" style="z-index: 2300;">
+
+    <div class="modal-content sms-sim-modal">
+
+        <button class="close" onclick="closeModal('smsPreviewModal')">&times;</button>
+
+        <div class="sms-phone-header">
+            <div class="sms-avatar"><i class="fa-solid fa-comment-sms"></i></div>
+            <div>
+                <h3 id="smsRecipientName">Specialist Name</h3>
+                <span id="smsRecipientNumber">0917-654-7024</span>
+            </div>
+        </div>
+
+        <div class="sms-thread-area">
+            <div class="sms-bubble-sent" id="smsBubbleText"></div>
+            <small class="sms-delivered-status"><i class="fa-solid fa-check-double"></i> Dispatched via ProFinder SMS Gateway</small>
+        </div>
+
+        <div class="sms-sim-actions">
+            <a id="openDeviceSmsLink" href="#" class="main-button" style="text-align:center; display:block;">
+                <i class="fa-solid fa-mobile-screen-button"></i> Open in Phone Messages App (SMS)
+            </a>
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ================= SERVICE PROVIDER DIRECTORY MODAL ================= -->
+<div class="modal" id="profileModal">
+
+    <div class="modal-content provider-directory-modal" id="providerDirectoryBox">
+
+        <button class="close directory-close" onclick="closeModal('profileModal')">
+            &times;
+        </button>
+
+        <div class="preview-mode-banner" id="previewModeBanner" style="display:none;">
+            <i class="fa-solid fa-eye"></i>
+            <span><strong>Preview mode.</strong> You're viewing this page as a visitor, so it is read-only. Only customers can post reviews or book.</span>
+        </div>
+
+        <div class="directory-header">
+            <span class="directory-category-pill" id="profileCategoryBadge">Category</span>
+            <h2 id="profileName">Provider Name</h2>
+            <p id="profileService" class="directory-subtitle"></p>
+            <div class="directory-meta-bar">
+                <span><i class="fa-solid fa-location-dot"></i> <span id="profileLocation">Location</span></span>
+                <span><i class="fa-solid fa-star"></i> <span id="profileRating">General Rating</span></span>
+                <span><i class="fa-solid fa-peso-sign"></i> <span id="profileRate">Min - Max Rate</span></span>
+            </div>
+        </div>
+
+        <div class="specialist-cards-wrapper">
+            <p class="specialist-instruction">
+                <i class="fa-solid fa-users"></i> Pumili ng Independent Service Provider / Company sa ibaba (bawat specialist ay may sariling email, rating & picture proofs):
+            </p>
+            <div id="specialistCardsList" class="specialist-cards-list"></div>
+        </div>
+
+        <!-- GENERAL REVIEWS FROM OTHER CLIENTS -->
+        <div class="client-reviews-section">
+            <div class="reviews-header">
+                <div>
+                    <h4><i class="fa-solid fa-comments"></i> General Reviews from Other Clients</h4>
+                    <small class="general-review-note">General feedback para sa buong service category (hiwalay sa individual specialist ratings)</small>
+                </div>
+                <span id="reviewCountBadge" class="review-count-pill">0 reviews</span>
+            </div>
+
+            <div id="providerReviewsList" class="client-reviews-list"></div>
+
+            <form class="add-review-form" onsubmit="submitProviderReview(event)">
+                <div class="review-form-row">
+                    <input type="text" id="reviewerName" placeholder="Your Name" required>
+                    <select id="reviewerRating" required>
+                        <option value="5">★★★★★ (5.0)</option>
+                        <option value="4">★★★★☆ (4.0)</option>
+                        <option value="3">★★★☆☆ (3.0)</option>
+                        <option value="2">★★☆☆☆ (2.0)</option>
+                        <option value="1">★☆☆☆☆ (1.0)</option>
+                    </select>
+                </div>
+                <div class="anon-row">
+                    <label class="anon-switch">
+                        <input type="checkbox" id="reviewAnonymous" role="switch" onchange="toggleReviewAnonymous(this)">
+                        <span class="anon-track"><span class="anon-thumb"></span></span>
+                        <span class="anon-label"><i class="fa-solid fa-user-secret"></i> Post anonymously</span>
+                    </label>
+                    <small id="reviewAnonNote" class="anon-note" style="display:none;">Your name will be hidden. Your review will show as "Anonymous".</small>
+                </div>
+                <div class="review-submit-row">
+                    <input type="text" id="reviewerComment" placeholder="Write a general review for this service category..." required>
+                    <button type="submit">Post</button>
+                </div>
+            </form>
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ================= INDIVIDUAL SPECIALIST REVIEWS & PICTURE PROOF MODAL ================= -->
+<div class="modal" id="specialistReviewModal" style="z-index: 2100;">
+
+    <div class="modal-content specialist-review-modal">
+
+        <button class="close" onclick="closeModal('specialistReviewModal')">
+            &times;
+        </button>
+
+        <div class="spec-modal-header">
+            <img id="specModalPhoto" src="" alt="Specialist Photo" class="spec-modal-avatar">
+            <div>
+                <span class="spec-modal-company" id="specModalCompany">Company Name</span>
+                <h2 id="specModalName">Specialist Name</h2>
+                <p id="specModalSpecialty" class="spec-modal-specialty">Specialty</p>
+                <div class="spec-modal-rating-pill" id="specModalRatingSummary">
+                    ☆☆☆☆☆ No verified client ratings yet
+                </div>
+            </div>
+        </div>
+
+        <div class="spec-proof-reviews-wrapper">
+            <div class="spec-proof-header">
+                <h4><i class="fa-solid fa-camera-retro"></i> Client Reviews & Service Picture Proof</h4>
+                <span>Publicly Viewable</span>
+            </div>
+            <div id="specModalReviewsList" class="spec-modal-reviews-list"></div>
+        </div>
+
+        <div id="specRatingLockedBox" class="rating-locked-box" style="display:none;">
+            <div class="lock-icon"><i class="fa-solid fa-lock"></i></div>
+            <div class="lock-body">
+                <h4>Rating & Proof Submission Locked (Served Clients Only)</h4>
+                <p id="specRatingLockedMsg">
+                    Hindi mo maa-access ang rating kung hindi ka pa naging confirmed client ng specialist na ito, pero maaari mong tingnan ang kanilang reviews, comments, at picture proofs sa itaas.
+                </p>
+                <div class="locked-controls-preview" aria-disabled="true">
+                    <select disabled>
+                        <option>🔒 Star Rating Locked</option>
+                    </select>
+                    <input type="text" disabled placeholder="🔒 Rating & photo proof upload locked until served...">
+                </div>
+                <button type="button" id="specBookNowFromLockBtn" class="lock-book-btn">
+                    <i class="fa-solid fa-calendar-plus"></i> Book This Specialist First
+                </button>
+            </div>
+        </div>
+
+        <form id="specRatingForm" class="spec-rating-form" onsubmit="submitSpecialistReview(event)" style="display:none;">
+            <div class="verified-client-banner">
+                <i class="fa-solid fa-circle-check"></i>
+                <span>Verified Client Access Unlocked — Share your rating and picture proof of service!</span>
+            </div>
+
+            <div class="review-form-row">
+                <input type="text" id="specReviewerName" placeholder="Your Name" readonly required>
+                <select id="specReviewerRating" required>
+                    <option value="5">★★★★★ (5.0 - Excellent)</option>
+                    <option value="4">★★★★☆ (4.0 - Very Good)</option>
+                    <option value="3">★★★☆☆ (3.0 - Good)</option>
+                    <option value="2">★★☆☆☆ (2.0 - Fair)</option>
+                    <option value="1">★☆☆☆☆ (1.0 - Poor)</option>
+                </select>
+            </div>
+
+            <textarea id="specReviewerComment"
+                      placeholder="Ikwento kung paano ka na-serve nang maayos ng specialist na ito..."
+                      required></textarea>
+
+            <div class="proof-upload-box">
+                <label for="specProofFile" class="proof-upload-label">
+                    <i class="fa-solid fa-image"></i> Upload Picture Proof (Required):
+                </label>
+                <input type="file" id="specProofFile" accept="image/*" onchange="previewProofImage(event)" required>
+                <div id="specProofPreviewWrap" class="proof-preview-wrap" style="display:none;">
+                    <img id="specProofPreviewImg" src="" alt="Proof Preview">
+                    <span>Proof photo ready to post</span>
+                </div>
+            </div>
+
+            <button type="submit" class="main-button">
+                <i class="fa-solid fa-star"></i> Submit Verified Rating & Picture Proof
+            </button>
+        </form>
+
+    </div>
+
+</div>
+
+
+<!-- ================= FULL-SIZE PICTURE PROOF LIGHTBOX ================= -->
+<div class="modal" id="proofLightboxModal" style="z-index: 2350;">
+    <div class="modal-content lightbox-modal-content">
+        <button class="close directory-close" onclick="closeModal('proofLightboxModal')">&times;</button>
+        <img id="lightboxProofImg" src="" alt="Service Proof Full View">
+        <p id="lightboxProofCaption"></p>
+    </div>
+</div>
+
+
+<!-- ================= TOAST ================= -->
+<div id="toast" class="toast">
+    <i class="fa-solid fa-circle-check"></i>
+    <span id="toastMessage">Success!</span>
+</div>
+
+
+<script src="script.js"></script>
+
+</body>
+</html>
